@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "Default.h"
 #include "ReturnCodes.h"
@@ -7,9 +8,24 @@
 #include "Config.h"
 #include "SpuMethods.h"
 
+static void GetCommandsArgs(int argc,  char* argv[]);
+
 static const char* INPUT_FILENAME  = "/home/projects/SPU/assembler_code.txt";
 
-int main () {
+static void GetCommandsArgs(int argc,  char* argv[]) {
+    assert(argv != NULL);
+
+    for (int i = 1; i < argc; i++) {
+        if (strcasecmp(argv[i], "-f") == 0) {
+            if (i != argc - 1)
+                INPUT_FILENAME = argv[i + 1];
+        }
+    }
+}
+
+int main (int argc, char* argv[]) {
+    GetCommandsArgs(argc, argv);
+
     SPU* spu = SpuInit();
 
     FILE* input_file = fopen(INPUT_FILENAME, "rb");
