@@ -9,6 +9,9 @@
 static const char* INPUT_FILENAME  = "/home/projects/SPU/assembler_code.txt";
 static const char* OUTPUT_FILENAME = "/home/projects/SPU/disassembler_code.txt";
 
+//TODO -f -o flags
+//TODO comments in asm
+
 int main() {
     FILE* input_filename = fopen(INPUT_FILENAME, "rb");
 
