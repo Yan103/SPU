@@ -8,6 +8,7 @@
 
 static const size_t CMDS_SIZE = 50;
 static const size_t REGS_SIZE = 5;
+static const size_t MAXLINE   = 50;
 
 #define END         "\033[0;0m"
 #define BLACK_CLR   "\033[1;30m"
