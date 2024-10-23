@@ -2,13 +2,17 @@
 #include <string.h>
 #include <cassert>
 
+#include <stdlib.h>
+
 #include "/home/projects/SPU/cpu/include/Default.h"
 #include "/home/projects/SPU/cpu/include/ReturnCodes.h"
 
+static Reg GetRegValue(char* cmd);
+static void SkipAsmComments(char* curr_line);
+static void GetCommandsArgs(int argc,  char* argv[]);
+
 static const char* INPUT_FILENAME  = "/home/projects/SPU/program.asm";
 static const char* OUTPUT_FILENAME = "/home/projects/SPU/assembler_code.txt";
-
-static Reg GetRegValue(char* cmd);
 
 static Reg GetRegValue(char* cmd) {
     assert(cmd != NULL);
@@ -20,7 +24,34 @@ static Reg GetRegValue(char* cmd) {
     return EX;
 }
 
-int main() {
+static void SkipAsmComments(char* curr_line) {
+    assert(curr_line != NULL);
+
+    for (size_t i = 0; i < strlen(curr_line); i++) {
+        if (curr_line[i] == ';') {
+            curr_line[i] = '\0';
+            break;
+        }
+    }
+}
+
+static void GetCommandsArgs(int argc,  char* argv[]) {
+    assert(argv != NULL);
+
+    for (int i = 1; i < argc; i++) {
+        if (strcasecmp(argv[i], "-f") == 0) {
+            if (i != argc - 1)
+                INPUT_FILENAME = argv[i + 1];
+        } else if (strcasecmp(argv[i], "-o") == 0) {
+            if (i != argc - 1)
+                OUTPUT_FILENAME = argv[i + 1];
+        }
+    }
+}
+
+int main(int argc, char* argv[]) {
+    GetCommandsArgs(argc, argv);
+
     FILE* input_filename = fopen(INPUT_FILENAME, "r");
 
     if (!input_filename) {
@@ -30,27 +61,32 @@ int main() {
     }
 
     char cmd[10] = {};
+    char curr_line[MAXLINE] = {};
     int  cmds[CMDS_SIZE] = {};
     int  arg = 0, i = 0, Doflag = 1;
 
     Label Labels[LABELS_COUNT] = {};
 
-    while (fscanf(input_filename, "%s", cmd) != EOF && Doflag >= 0) {
+    while (fgets(curr_line, MAXLINE, input_filename) != NULL && Doflag >= 0) {
+        SkipAsmComments(curr_line);
+
+        sscanf(curr_line, "%s", cmd);
+
         if (strcasecmp(cmd, "push") == 0) {
-            fscanf(input_filename, "%d", &arg);
+            sscanf(curr_line, "%s %d", cmd, &arg);
             cmds[i++] = PUSH;
             cmds[i++] = arg;
             continue;
         }
         if (strcasecmp(cmd, "pushr") == 0)  {
             cmds[i++] = PUSHR;
-            fscanf(input_filename, "%s", cmd);
+            sscanf(curr_line, "%s %s", cmd, cmd);
             cmds[i++] = GetRegValue(cmd);
             continue;
         }
         if (strcasecmp(cmd, "popr") == 0) {
             cmds[i++] = POPR;
-            fscanf(input_filename, "%s", cmd);
+            sscanf(curr_line, "%s %s", cmd, cmd);
             cmds[i++] = GetRegValue(cmd);
             continue;
         }
@@ -98,8 +134,7 @@ int main() {
         }
         if (strcasecmp(cmd, "jmp") == 0) {
             cmds[i++] = JMP;
-            fscanf(input_filename, "%s", cmd);
-            if (Doflag == 0) cmd[ strlen(cmd) - 1] = '\0';
+            sscanf(curr_line, "%s %s", cmd, cmd);
 
             for (size_t j = 0; j < LABELS_COUNT; j++) {
                 if (strcasecmp(Labels[j].label_name, cmd) == 0) {
@@ -113,7 +148,7 @@ int main() {
         }
         if (strcasecmp(cmd, "jne") == 0) {
             cmds[i++] = JNE;
-            fscanf(input_filename, "%s", cmd);
+            sscanf(curr_line, "%s %s", cmd, cmd);
 
             for (size_t j = 0; j < LABELS_COUNT; j++) {
                 if (strcasecmp(Labels[j].label_name, cmd) == 0) {
