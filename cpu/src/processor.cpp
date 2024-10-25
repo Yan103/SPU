@@ -8,6 +8,8 @@
 #include "Config.h"
 #include "SpuMethods.h"
 
+// stupid comment
+
 static void GetCommandsArgs(int argc,  char* argv[]);
 
 static const char* INPUT_FILENAME  = "/home/projects/SPU/assembler_code.txt";
