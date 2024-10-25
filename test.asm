@@ -1,12 +1,25 @@
-push 100
-pushr AX; pushing to AX register
-push 60
-push 10
-loop:        ; label start
-    push 10
-    add
-    jne loop
-popr AX
-mlt
-out
+call quad
 hlt
+quad:
+        in
+        cpy
+        pushr AX
+        in
+        cpy
+        cpy
+        mlt
+        pushr EX
+        pushr BX
+        in
+        push 4
+        mlt
+        mlt
+        pushr CX
+        call solution
+        ret
+solution:
+        popr EX
+        popr CX
+        sub
+        out
+        ret

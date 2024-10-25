@@ -1,14 +1,13 @@
-push 100
-pushr AX; pushing to AX register
-push 60
-push 10
-jmp SPGOOAL
-loop:        ; label start
-    push 10
-    add
-    jne loop
-popr AX
-mlt
-SPGOOAL:
+push 5
+push 10;dfdsfnsdfnsdf
+call func
 out
-hlt
+hlt             ; sfjdsfsdf
+func:
+        add
+        push 15
+        call abc
+        ret
+abc:
+        mlt
+        ret
