@@ -66,9 +66,17 @@ int main(int argc, char* argv[]) {
     int  arg = 0, i = 0, Doflag = 1;
 
     Label Labels[LABELS_COUNT] = {};
+    char* fflag = {};
 
-    while (fgets(curr_line, MAXLINE, input_filename) != NULL && Doflag >= 0) {
+    while ((fflag = fgets(curr_line, MAXLINE, input_filename)) != NULL || Doflag >= 0) {
         SkipAsmComments(curr_line);
+
+        if (fflag == NULL) {
+            i = 0;
+            Doflag--;
+            fseek(input_filename, 0L, SEEK_SET);
+            continue;
+        }
 
         sscanf(curr_line, "%s", cmd);
 
@@ -114,11 +122,17 @@ int main(int argc, char* argv[]) {
             cmds[i++] = OUT;
             continue;
         }
+        if (strcasecmp(cmd, "ret") == 0) {
+            cmds[i++] = RET;
+            continue;
+        }
+        if (strcasecmp(cmd, "cpy") == 0) {
+            cmds[i++] = CPY;
+            continue;
+        }
         if (strcasecmp(cmd, "hlt") == 0) {
             cmds[i++] = HLT;
             Doflag--;
-            i = 0;
-            fseek(input_filename, 0L, SEEK_SET);
             continue;
         }
         if (strstr(cmd, ":")) {
@@ -158,7 +172,20 @@ int main(int argc, char* argv[]) {
             }
             continue;
         }
+        if (strcasecmp(cmd, "call") == 0) {
+            cmds[i++] = CALL;
+            sscanf(curr_line, "%s %s", cmd, cmd);
 
+            for (size_t j = 0; j < LABELS_COUNT; j++) {
+                if (strcasecmp(Labels[j].label_name, cmd) == 0) {
+                    cmds[i++] = Labels[j].label_number;
+                    break;
+                } else if (j == LABELS_COUNT - 1) {
+                    cmds[i++] = -1;
+                }
+            }
+            continue;
+        }
         printf(RED("UNDEFINED COMMAND!!!\n"));
     }
 
