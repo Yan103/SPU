@@ -34,6 +34,12 @@ enum Comands {
     OUT   =  9,
     JNE   = 10,
     JMP   = 11,
+    JZ    = 12,
+    JGZ   = 13,
+    JLZ   = 14,
+    CALL  = 15,
+    CPY   = 16,
+    RET   = 17,
     HLT   = -1,
 };
 
