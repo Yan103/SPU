@@ -40,38 +40,46 @@ int main (int argc, char* argv[]) {
 
     fclose(input_file);
 
-    int DoFlag = 1, ip = 0;
+    int DoFlag = 1;
 
     while (DoFlag) {
-        switch(spu->cmds[ip]) {
+        switch(spu->cmds[ spu->ip ]) {
             case PUSH: {
-                StackPush(spu->st, spu->cmds[++ip]);
-                ip++;
+                StackPush(spu->st, spu->cmds[ ++(spu->ip) ]);
+                (spu->ip)++;
                 break;
             }
 
             case PUSHR: {
-                spu->regs[ spu->cmds[++ip] ] = StackPop(spu->st);
-                ip++;
+                spu->regs[ spu->cmds[ ++(spu->ip) ] ] = StackPop(spu->st);
+                (spu->ip)++;
                 break;
             }
 
             case POPR: {
-                StackPush(spu->st, spu->regs[ spu->cmds[++ip] ]);
-                ip++;
+                StackPush(spu->st, spu->regs[ spu->cmds[ ++(spu->ip) ] ]);
+                (spu->ip)++;
                 break;
             }
 
             case ADD: {
                 StackPush(spu->st, StackPop(spu->st) + StackPop(spu->st));
-                ip++;
+                (spu->ip)++;
+                break;
+            }
+
+            case CPY: {
+                int a = StackPop(spu->st);
+                StackPush(spu->st, a);
+                StackPush(spu->st, a);
+                (spu->ip)++;
                 break;
             }
 
             case SUB: {
                 int a = StackPop(spu->st);
                 StackPush(spu->st, StackPop(spu->st) - a);
-                ip++;
+                (spu->ip)++;
                 break;
             }
 
@@ -83,13 +91,13 @@ int main (int argc, char* argv[]) {
                     printf(RED("ERROR! DIVISION BY ZERO!!!\n"));
                     DoFlag = 0;
                 }
-                ip++;
+                (spu->ip)++;
                 break;
             }
 
             case MLT: {
                 StackPush(spu->st, StackPop(spu->st) * StackPop(spu->st));
-                ip++;
+                (spu->ip)++;
                 break;
             }
 
@@ -97,13 +105,13 @@ int main (int argc, char* argv[]) {
                 int a = 0;
                 printf(YELLOW("Enter a number: ")); scanf("%d", &a);
                 StackPush(spu->st, a);
-                ip++;
+                (spu->ip)++;
                 break;
             }
 
             case OUT: {
                 printf(GREEN("RESULT: %d\n"), StackPop(spu->st));
-                ip++;
+                (spu->ip)++;
                 break;
             }
 
@@ -113,8 +121,21 @@ int main (int argc, char* argv[]) {
             }
 
             case JMP: {
-                int next_ip = spu->cmds[++ip];
-                ip = next_ip;
+                int next_ip = spu->cmds[ ++(spu->ip) ];
+                spu->ip = next_ip;
+                break;
+            }
+
+            case CALL: {
+                StackPush(spu->stFunc, spu->ip + 2);
+                int next_ip = spu->cmds[ ++(spu->ip) ];
+                spu->ip = next_ip;
+                break;
+            }
+
+            case RET: {
+                int next_ip = StackPop(spu->stFunc);
+                spu->ip = next_ip;
                 break;
             }
 
@@ -123,9 +144,9 @@ int main (int argc, char* argv[]) {
                 int b = StackPop(spu->st);
 
                 if (a != b) {
-                    int next_ip = spu->cmds[++ip];
-                    ip = next_ip;
-                } else ip += 2;
+                    int next_ip = spu->cmds[ ++(spu->ip) ];
+                    spu->ip = next_ip;
+                } else spu->ip += 2;
 
                 StackPush(spu->st, b);
                 StackPush(spu->st, a);
@@ -133,7 +154,7 @@ int main (int argc, char* argv[]) {
             }
 
             default: {
-                printf("%d %d", ip, spu->cmds[ip]);
+                printf("%d %d", spu->ip, spu->cmds[ spu->ip ]);
                 printf(RED("UNKNOWN CODE!!!\n"));
                 break;
             }
