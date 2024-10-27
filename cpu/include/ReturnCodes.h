@@ -26,11 +26,11 @@ enum FuncReturn {
 enum Comands {
     PUSH  =  1,
     POP   =  2,
-    POPR  =  3,
+    LABEL =  3,
     ADD   =  4,
     SUB   =  5,
     DIV   =  6,
-    MLT   =  7,
+    MUL   =  7,
     IN    =  8,
     OUT   =  9,
     JNE   = 10,
@@ -39,7 +39,6 @@ enum Comands {
     JGZ   = 13,
     JLZ   = 14,
     CALL  = 15,
-    CPY   = 16,
     RET   = 17,
     HLT   = -1,
 };

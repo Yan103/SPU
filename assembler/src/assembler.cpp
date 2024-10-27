@@ -5,20 +5,10 @@
 
 #include <stdlib.h>
 
-#include "/home/yan/projects/processor/cpu/include/Default.h"
+#include "assembler.h"
 #include "/home/yan/projects/processor/cpu/include/ReturnCodes.h"
 
-static Reg GetRegValue(char* cmd);
-static void SkipAsmComments(char* curr_line);
-static void GetCommandsArgs(int argc,  char* argv[]);
-static void FillArgType(char* arg, int* arg_type);
-static void PushPopFill(int* cmds, int* ip, char* arg);
-static char* SearchConstPtr(char* str, size_t str_len);
-
-static const char* INPUT_FILENAME  = "/home/yan/projects/processor/program.asm";
-static const char* OUTPUT_FILENAME = "/home/yan/projects/processor/assembler_code.txt";
-
-static char* SearchConstPtr(char* str, size_t str_len) {
+char* SearchConstPtr(char* str, size_t str_len) {
     assert(str != NULL);
 
     for (size_t i = 0; i < str_len; i++) {
@@ -28,7 +18,7 @@ static char* SearchConstPtr(char* str, size_t str_len) {
     return NULL;
 }
 
-static void FillArgType(char* arg, int* arg_type) {
+void FillArgType(char* arg, int* arg_type) {
     assert(arg != NULL);
     assert(arg_type != NULL);
 
@@ -43,26 +33,25 @@ static void FillArgType(char* arg, int* arg_type) {
 
     if (plus_ptr != NULL) {
         *arg_type |= 3;
-    }
-    else if (reg_ptr != NULL) {
+    } else if (reg_ptr != NULL) {
         *arg_type |= 1;
-    }
-    else {
+    } else {
         *arg_type |= 2;
     }
 }
 
-static Reg GetRegValue(char* cmd) {
+Reg GetRegValue(char* cmd) {
     assert(cmd != NULL);
 
     if (strcasecmp(cmd, "ax") == 0) return AX;
     if (strcasecmp(cmd, "bx") == 0) return BX;
     if (strcasecmp(cmd, "cx") == 0) return CX;
     if (strcasecmp(cmd, "dx") == 0) return DX;
+
     return EX;
 }
 
-static void SkipAsmComments(char* curr_line) {
+void SkipAsmComments(char* curr_line) {
     assert(curr_line != NULL);
 
     for (size_t i = 0; i < strlen(curr_line); i++) {
@@ -73,7 +62,7 @@ static void SkipAsmComments(char* curr_line) {
     }
 }
 
-static void GetCommandsArgs(int argc,  char* argv[]) {
+void GetCommandsArgs(int argc,  char* argv[]) {
     assert(argv != NULL);
 
     for (int i = 1; i < argc; i++) {
@@ -87,7 +76,25 @@ static void GetCommandsArgs(int argc,  char* argv[]) {
     }
 }
 
-static void PushPopFill(int* cmds, int* ip, char* arg) {
+void FromTextToCode (char* cmd, int* machine_cmd) {
+    if      (strchr(cmd, ':')         != 0)  *machine_cmd = LABEL;
+    else if (strcasecmp(cmd, "push")  == 0)  *machine_cmd = PUSH;
+    else if (strcasecmp(cmd, "pop")   == 0)  *machine_cmd = POP;
+    else if (strcasecmp(cmd, "add")   == 0)  *machine_cmd = ADD;
+    else if (strcasecmp(cmd, "sub")   == 0)  *machine_cmd = SUB;
+    else if (strcasecmp(cmd, "mul")   == 0)  *machine_cmd = MUL;
+    else if (strcasecmp(cmd, "div")   == 0)  *machine_cmd = DIV;
+    else if (strcasecmp(cmd, "in")    == 0)  *machine_cmd = IN;
+    else if (strcasecmp(cmd, "out")   == 0)  *machine_cmd = OUT;
+    else if (strcasecmp(cmd, "jmp")   == 0)  *machine_cmd = JMP;
+    else if (strcasecmp(cmd, "jne")   == 0)  *machine_cmd = JNE;
+    else if (strcasecmp(cmd, "call")  == 0)  *machine_cmd = CALL;
+    else if (strcasecmp(cmd, "ret")   == 0)  *machine_cmd = RET;
+    else if (strcasecmp(cmd, "hlt")   == 0)  *machine_cmd = HLT;
+    // TODO error check
+}
+
+void PushPopFill(int* cmds, int* ip, char* arg) {
     assert(cmds != NULL);
     assert(ip   != NULL);
     assert(arg  != NULL);
@@ -109,21 +116,14 @@ static void PushPopFill(int* cmds, int* ip, char* arg) {
     }
 }
 
-int main(int argc, char* argv[]) {
-    GetCommandsArgs(argc, argv);
-
-    FILE* input_filename = fopen(INPUT_FILENAME, "r");
-
-    if (!input_filename) {
-        printf(RED("Error occured while opening file\n"));
-
-        return BAD_FILE;
-    }
+void Assembler(FILE* input_filename, FILE* output_filename) {
+    assert(input_filename  != NULL);
+    assert(output_filename != NULL);
 
     char cmd[10] = {};
     char curr_line[MAXLINE] = {};
     int  cmds[CMDS_SIZE] = {};
-    int  arg = 0, i = 0, Doflag = 1;
+    int i = 0, Doflag = 1;
 
     Label Labels[LABELS_COUNT] = {};
     char* fflag = {};
@@ -139,136 +139,65 @@ int main(int argc, char* argv[]) {
         }
 
         sscanf(curr_line, "%s", cmd);
+        int machine_code = -2;
+        FromTextToCode(cmd, &machine_code);
 
-        if (strcasecmp(cmd, "push") == 0) {
-            cmds[i++] = PUSH;
-            sscanf(curr_line, "%s %s", cmd, cmd);
-            PushPopFill(cmds, &i, cmd);
-            continue;
-        }
-        if (strcasecmp(cmd, "pop") == 0) {
-            cmds[i++] = POP;
-            sscanf(curr_line, "%s %s", cmd, cmd);
-            PushPopFill(cmds, &i, cmd);
-            continue;
-        }
-        /*if (strcasecmp(cmd, "pushr") == 0)  {
-            cmds[i++] = PUSHR;
-            sscanf(curr_line, "%s %s", cmd, cmd);
-            cmds[i++] = GetRegValue(cmd);
-            continue;
-        }
-        if (strcasecmp(cmd, "popr") == 0) {
-            cmds[i++] = POPR;
-            sscanf(curr_line, "%s %s", cmd, cmd);
-            cmds[i++] = GetRegValue(cmd);
-            continue;
-        }*/
-        if (strcasecmp(cmd, "add") == 0) {
-            cmds[i++] = ADD;
-            continue;
-        }
-        if (strcasecmp(cmd, "sub") == 0) {
-            cmds[i++] = SUB;
-            continue;
-        }
-        if (strcasecmp(cmd, "div") == 0) {
-            cmds[i++] = DIV;
-            continue;
-        }
-        if (strcasecmp(cmd, "mlt") == 0) {
-            cmds[i++] = MLT;
-            continue;
-        }
-        if (strcasecmp(cmd, "in") == 0) {
-            cmds[i++] = IN;
-            continue;
-        }
-        if (strcasecmp(cmd, "out") == 0) {
-            cmds[i++] = OUT;
-            continue;
-        }
-        if (strcasecmp(cmd, "ret") == 0) {
-            cmds[i++] = RET;
-            continue;
-        }
-        if (strcasecmp(cmd, "cpy") == 0) {
-            cmds[i++] = CPY;
-            continue;
-        }
-        if (strcasecmp(cmd, "hlt") == 0) {
-            cmds[i++] = HLT;
-            Doflag--;
-            continue;
-        }
-        if (strstr(cmd, ":")) {
-            for (size_t j = 0; j < LABELS_COUNT; j++) {
-                if (Labels[j].label_number == -1) {
-                    Labels[j].label_number = i;
-                    cmd[ strlen(cmd) - 1 ] = '\0';
-                    strcpy(Labels[j].label_name, cmd);
-                    break;
-                }
-            }
-            continue;
-        }
-        if (strcasecmp(cmd, "jmp") == 0) {
-            cmds[i++] = JMP;
-            sscanf(curr_line, "%s %s", cmd, cmd);
+        switch (machine_code) {
+            case PUSH:
+            case POP: {
+                cmds[i++] = machine_code;
+                sscanf(curr_line, "%s %s", cmd, cmd);
+                PushPopFill(cmds, &i, cmd);
 
-            for (size_t j = 0; j < LABELS_COUNT; j++) {
-                if (strcasecmp(Labels[j].label_name, cmd) == 0) {
-                    cmds[i++] = Labels[j].label_number;
-                    break;
-                } else if (j == LABELS_COUNT - 1) {
-                    cmds[i++] = -1;
-                }
+                continue;
             }
-            continue;
-        }
-        if (strcasecmp(cmd, "jne") == 0) {
-            cmds[i++] = JNE;
-            sscanf(curr_line, "%s %s", cmd, cmd);
 
-            for (size_t j = 0; j < LABELS_COUNT; j++) {
-                if (strcasecmp(Labels[j].label_name, cmd) == 0) {
-                    cmds[i++] = Labels[j].label_number;
-                    break;
-                }
-            }
-            continue;
-        }
-        if (strcasecmp(cmd, "call") == 0) {
-            cmds[i++] = CALL;
-            sscanf(curr_line, "%s %s", cmd, cmd);
+            case ADD:
+            case SUB:
+            case DIV:
+            case MUL:
+            case IN:
+            case OUT:
+            case RET:
+            case HLT: {
+                cmds[i++] = machine_code;
 
-            for (size_t j = 0; j < LABELS_COUNT; j++) {
-                if (strcasecmp(Labels[j].label_name, cmd) == 0) {
-                    cmds[i++] = Labels[j].label_number;
-                    break;
-                } else if (j == LABELS_COUNT - 1) {
-                    cmds[i++] = -1;
-                }
+                continue;
             }
-            continue;
+
+            case JMP:
+            case JNE:
+            case CALL: {
+                cmds[i++] = machine_code;
+                sscanf(curr_line, "%s %s", cmd, cmd);
+
+                for (size_t j = 0; j < LABELS_COUNT; j++) {
+                    if (strcasecmp(Labels[j].label_name, cmd) == 0) {
+                        cmds[i++] = Labels[j].label_number;
+                        break;
+                    } else if (j == LABELS_COUNT - 1) {
+                        cmds[i++] = -1;
+                    }
+                }
+                continue;
+            }
+
+            case LABEL: {
+                for (size_t j = 0; j < LABELS_COUNT; j++) {
+                    if (Labels[j].label_number == -1) {
+                        Labels[j].label_number = i;
+                        cmd[ strlen(cmd) - 1 ] = '\0';
+                        strcpy(Labels[j].label_name, cmd);
+                        break;
+                    }
+                }
+                continue;
+            }
+
+            default: RED("UNDEFINED COMMAND!!!\n");
         }
-        printf(RED("UNDEFINED COMMAND!!!\n"));
+
     }
 
-    FILE* output_filename = fopen(OUTPUT_FILENAME, "wb");
-
-    if (!output_filename) {
-        printf(RED("Error occured while opening file\n"));
-
-        return BAD_FILE;
-    }
-
-    fwrite(cmds, sizeof(cmds[0]), sizeof(cmds) / sizeof(cmds[0]), output_filename);
-
-    fclose(input_filename);
-    fclose(output_filename);
-
-    printf(GREEN("ASSEMBLING END!\n"));
-
-    return SUCCESS;
+    fwrite(cmds, sizeof(cmds[0]), (size_t)i, output_filename);
 }

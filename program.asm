@@ -4,3 +4,5 @@ push 5
 pop AX
 push 10
 pop [AX]
+out
+hlt
