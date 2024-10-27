@@ -81,12 +81,18 @@ int main(int argc, char* argv[]) {
         sscanf(curr_line, "%s", cmd);
 
         if (strcasecmp(cmd, "push") == 0) {
-            sscanf(curr_line, "%s %d", cmd, &arg);
             cmds[i++] = PUSH;
-            cmds[i++] = arg;
+            sscanf(curr_line, "%s %s", cmd, cmd);
+            printf("%s\n", cmd);
             continue;
         }
-        if (strcasecmp(cmd, "pushr") == 0)  {
+        if (strcasecmp(cmd, "pop") == 0) {
+            cmds[i++] = POP;
+            sscanf(curr_line, "%s %s", cmd, cmd);
+            printf("%s\n", cmd);
+            continue;
+        }
+        /*if (strcasecmp(cmd, "pushr") == 0)  {
             cmds[i++] = PUSHR;
             sscanf(curr_line, "%s %s", cmd, cmd);
             cmds[i++] = GetRegValue(cmd);
@@ -97,7 +103,7 @@ int main(int argc, char* argv[]) {
             sscanf(curr_line, "%s %s", cmd, cmd);
             cmds[i++] = GetRegValue(cmd);
             continue;
-        }
+        }*/
         if (strcasecmp(cmd, "add") == 0) {
             cmds[i++] = ADD;
             continue;

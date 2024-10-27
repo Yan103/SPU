@@ -24,7 +24,7 @@ enum FuncReturn {
 
 enum Comands {
     PUSH  =  1,
-    PUSHR =  2,
+    POP   =  2,
     POPR  =  3,
     ADD   =  4,
     SUB   =  5,

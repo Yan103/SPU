@@ -1,13 +1,6 @@
+push 15
+pop [10]
 push 5
-push 10;aboba
-call func
-out
-hlt             ; aboba
-func:
-        add
-        push 15
-        call abc
-        ret
-abc:
-        mlt
-        ret
+pop AX
+push 10
+pop [AX]                        
