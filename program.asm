@@ -1,8 +1,8 @@
 push 5
-push 10;dfdsfnsdfnsdf
+push 10;aboba
 call func
 out
-hlt             ; sfjdsfsdf
+hlt             ; aboba
 func:
         add
         push 15

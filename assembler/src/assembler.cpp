@@ -4,15 +4,15 @@
 
 #include <stdlib.h>
 
-#include "/home/projects/SPU/cpu/include/Default.h"
-#include "/home/projects/SPU/cpu/include/ReturnCodes.h"
+#include "/home/yan/projects/processor/cpu/include/Default.h"
+#include "/home/yan/projects/processor/cpu/include/ReturnCodes.h"
 
 static Reg GetRegValue(char* cmd);
 static void SkipAsmComments(char* curr_line);
 static void GetCommandsArgs(int argc,  char* argv[]);
 
-static const char* INPUT_FILENAME  = "/home/projects/SPU/program.asm";
-static const char* OUTPUT_FILENAME = "/home/projects/SPU/assembler_code.txt";
+static const char* INPUT_FILENAME  = "/home/yan/projects/processor/program.asm";
+static const char* OUTPUT_FILENAME = "/home/yan/projects/processor/assembler_code.txt";
 
 static Reg GetRegValue(char* cmd) {
     assert(cmd != NULL);

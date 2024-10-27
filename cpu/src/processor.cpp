@@ -12,7 +12,7 @@
 
 static void GetCommandsArgs(int argc,  char* argv[]);
 
-static const char* INPUT_FILENAME  = "/home/projects/SPU/assembler_code.txt";
+static const char* INPUT_FILENAME  = "/home/yan/projects/processor/assembler_code.txt";
 
 static void GetCommandsArgs(int argc,  char* argv[]) {
     assert(argv != NULL);

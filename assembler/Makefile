@@ -12,8 +12,8 @@ CFLAGS    = -DDEBUG -ggdb3 -std=c++17 -O0 -Wall -Wextra -Weffc++ -Waggressive-lo
 			-fsanitize=address,alignment,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,leak,nonnull-attribute,null,object-size,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr
 SRC_DIR   = src
 INC_DIR   = include
-OBJ_DIR   = /home/projects/SPU/obj
-BIN_DIR   = /home/projects/SPU/build
+OBJ_DIR   = /home/yan/projects/processor/obj
+BIN_DIR   = /home/yan/projects/processor/build
 SOURCES   = $(wildcard $(SRC_DIR)/*.cpp)
 INCLUDES  = $(wildcard $(INC_DIR)/*.h)
 OBJECTS   = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
