@@ -49,6 +49,7 @@ enum Reg {
     CX = 2,
     DX = 3,
     EX = 4,
+    XX = 5,
 };
 
 struct Label {

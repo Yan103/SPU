@@ -12,9 +12,13 @@ static const char* OUTPUT_FILENAME = "/home/yan/projects/processor/assembler_cod
 Reg GetRegValue(char* cmd);
 
 void SkipAsmComments(char* curr_line);
+
 void GetCommandsArgs(int argc,  char* argv[]);
+
 void FillArgType(char* arg, int* arg_type);
+
 void PushPopFill(int* cmds, int* ip, char* arg);
+
 char* SearchConstPtr(char* str, size_t str_len);
 
 void FromTextToCode(char* cmd, int* machine_code);

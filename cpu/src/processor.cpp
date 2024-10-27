@@ -7,14 +7,9 @@
 #include "Stack.h"
 #include "Config.h"
 #include "SpuMethods.h"
+#include "processor.h"
 
-// stupid comment
-
-static void GetCommandsArgs(int argc,  char* argv[]);
-
-static const char* INPUT_FILENAME  = "/home/yan/projects/processor/assembler_code.txt";
-
-static void GetCommandsArgs(int argc,  char* argv[]) {
+void GetCommandsArgs(int argc,  char* argv[]) {
     assert(argv != NULL);
 
     for (int i = 1; i < argc; i++) {
@@ -25,55 +20,54 @@ static void GetCommandsArgs(int argc,  char* argv[]) {
     }
 }
 
-int main (int argc, char* argv[]) {
-    GetCommandsArgs(argc, argv);
+int* GetArg (SPU* spu) {
+    assert(spu != NULL);
 
-    SPU* spu = SpuInit();
+    int arg_type  = (spu->cmds)[++(spu->ip)];
+    int* arg_value = NULL;
 
-    FILE* input_file = fopen(INPUT_FILENAME, "rb");
-
-    if (!input_file) {
-        printf(RED("Error occured while opening file\n"));
-
-        return BAD_FILE;
+    if (arg_type & 1) {
+        arg_value = &(spu->regs[(spu->cmds)[++(spu->ip)]]);
     }
 
-    fread(spu->cmds, sizeof(StackElem_t), CMDS_SIZE, input_file);
+    if (arg_type & 2) {
+        if (arg_value != NULL) {
+            spu->regs[XX] = *arg_value + (spu->cmds)[++(spu->ip)];
+        } else {
+            spu->regs[XX] = (spu->cmds)[++(spu->ip)];
+        }
+        arg_value = &spu->regs[XX];
+    }
 
-    fclose(input_file);
+    if (arg_type & 4) {
+        arg_value = &spu->ram[*arg_value];
+    }
+
+    return arg_value;
+}
+
+void CPUWork(SPU* spu) {
+    assert(spu != NULL);
 
     int DoFlag = 1;
 
     while (DoFlag) {
         switch(spu->cmds[ spu->ip ]) {
             case PUSH: {
-                StackPush(spu->st, spu->cmds[ ++(spu->ip) ]);
+                int* push_elem_ptr = GetArg(spu);
+                StackPush(spu->st, *push_elem_ptr);
                 (spu->ip)++;
                 break;
             }
 
-            case PUSHR: {
-                spu->regs[ spu->cmds[ ++(spu->ip) ] ] = StackPop(spu->st);
-                (spu->ip)++;
-                break;
-            }
-
-            case POPR: {
-                StackPush(spu->st, spu->regs[ spu->cmds[ ++(spu->ip) ] ]);
-                (spu->ip)++;
+            case POP: {
+                int* pop_ptr = GetArg(spu);
+                *pop_ptr = StackPop(spu->st);
                 break;
             }
 
             case ADD: {
                 StackPush(spu->st, StackPop(spu->st) + StackPop(spu->st));
-                (spu->ip)++;
-                break;
-            }
-
-            case CPY: {
-                int a = StackPop(spu->st);
-                StackPush(spu->st, a);
-                StackPush(spu->st, a);
                 (spu->ip)++;
                 break;
             }
@@ -97,7 +91,7 @@ int main (int argc, char* argv[]) {
                 break;
             }
 
-            case MLT: {
+            case MUL: {
                 StackPush(spu->st, StackPop(spu->st) * StackPop(spu->st));
                 (spu->ip)++;
                 break;
@@ -162,8 +156,4 @@ int main (int argc, char* argv[]) {
             }
         }
     }
-
-    SpuDtor(spu);
-
-    return SUCCESS;
 }

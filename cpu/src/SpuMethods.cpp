@@ -9,8 +9,6 @@
 
 #include <stdlib.h>
 
-// useless comment
-
 SPU* SpuInit() {
     SPU* spu = (SPU*)calloc(1, sizeof(SPU));
     ASSERT(spu != NULL, "MEMORY ERROR!\n");

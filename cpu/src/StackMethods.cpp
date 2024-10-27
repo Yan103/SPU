@@ -206,6 +206,7 @@ const char* StackStrErr(FuncReturn error) {
         DESCR_(KANARY_DAMAGED);
         DESCR_(HASH_ERROR);
         DESCR_(MEMORY_ERROR);
+        DESCR_(ERROR);
 
         default: return "UNKNOWN STATUS";
     }

@@ -1,11 +1,5 @@
-push 15
-pop [10]
-push 5
-pop AX
 push 10
-pop [AX + 5]
-push 777
+push 20
+add
 out
-push 10
-pop [AX]
 hlt
