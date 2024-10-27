@@ -179,6 +179,7 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
                         cmds[i++] = -1;
                     }
                 }
+
                 continue;
             }
 
@@ -191,10 +192,11 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
                         break;
                     }
                 }
+
                 continue;
             }
 
-            default: RED("UNDEFINED COMMAND!!!\n");
+            default: printf(RED("UNDEFINED COMMAND!!!\n"));
         }
 
     }

@@ -10,6 +10,7 @@ static const char* INPUT_FILENAME  = "/home/yan/projects/processor/program.asm";
 static const char* OUTPUT_FILENAME = "/home/yan/projects/processor/assembler_code.txt";
 
 Reg GetRegValue(char* cmd);
+
 void SkipAsmComments(char* curr_line);
 void GetCommandsArgs(int argc,  char* argv[]);
 void FillArgType(char* arg, int* arg_type);
