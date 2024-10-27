@@ -20,6 +20,7 @@ enum FuncReturn {
     KANARY_DAMAGED = 0b100000,   ///< KANARY DAMAGED
     HASH_ERROR     = 0b1000000,  ///< HASH ERROR
     MEMORY_ERROR   = 0b10000000, ///< MEMORY ERROR
+    ERROR          = -1,
 };
 
 enum Comands {

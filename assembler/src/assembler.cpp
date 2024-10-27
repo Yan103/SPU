@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <cassert>
@@ -10,9 +11,46 @@
 static Reg GetRegValue(char* cmd);
 static void SkipAsmComments(char* curr_line);
 static void GetCommandsArgs(int argc,  char* argv[]);
+static void FillArgType(char* arg, int* arg_type);
+static void PushPopFill(int* cmds, int* ip, char* arg);
+static char* SearchConstPtr(char* str, size_t str_len);
 
 static const char* INPUT_FILENAME  = "/home/yan/projects/processor/program.asm";
 static const char* OUTPUT_FILENAME = "/home/yan/projects/processor/assembler_code.txt";
+
+static char* SearchConstPtr(char* str, size_t str_len) {
+    assert(str != NULL);
+
+    for (size_t i = 0; i < str_len; i++) {
+        if (isdigit(*(str++))) return --str;
+    }
+
+    return NULL;
+}
+
+static void FillArgType(char* arg, int* arg_type) {
+    assert(arg != NULL);
+    assert(arg_type != NULL);
+
+    char* open_bracket = strchr(arg, '[');
+    char* plus_ptr     = strchr(arg, '+');
+    char* reg_ptr      = strchr(arg, 'X');
+
+    if (open_bracket != NULL) {
+        //if (strchr(arg, ']') == NULL) return ERROR; // TODO smt with it // TODO! error enum for cpu/asm
+        *arg_type |= 4;
+    }
+
+    if (plus_ptr != NULL) {
+        *arg_type |= 3;
+    }
+    else if (reg_ptr != NULL) {
+        *arg_type |= 1;
+    }
+    else {
+        *arg_type |= 2;
+    }
+}
 
 static Reg GetRegValue(char* cmd) {
     assert(cmd != NULL);
@@ -45,6 +83,28 @@ static void GetCommandsArgs(int argc,  char* argv[]) {
         } else if (strcasecmp(argv[i], "-o") == 0) {
             if (i != argc - 1)
                 OUTPUT_FILENAME = argv[i + 1];
+        }
+    }
+}
+
+static void PushPopFill(int* cmds, int* ip, char* arg) {
+    assert(cmds != NULL);
+    assert(ip   != NULL);
+    assert(arg  != NULL);
+
+    int arg_type = 0;
+    FillArgType(arg, &arg_type);
+
+    cmds[ (*ip)++ ] = arg_type;
+
+    if (arg_type & 1) {
+        cmds[(*ip)++] = GetRegValue(arg);
+    }
+
+    if (arg_type & 2) {
+        char* const_ptr = SearchConstPtr(arg, strlen(arg)); // TODO check for NULL!
+        if (const_ptr != NULL) {
+            sscanf(const_ptr, "%d", &cmds[(*ip)++]);
         }
     }
 }
@@ -83,13 +143,13 @@ int main(int argc, char* argv[]) {
         if (strcasecmp(cmd, "push") == 0) {
             cmds[i++] = PUSH;
             sscanf(curr_line, "%s %s", cmd, cmd);
-            printf("%s\n", cmd);
+            PushPopFill(cmds, &i, cmd);
             continue;
         }
         if (strcasecmp(cmd, "pop") == 0) {
             cmds[i++] = POP;
             sscanf(curr_line, "%s %s", cmd, cmd);
-            printf("%s\n", cmd);
+            PushPopFill(cmds, &i, cmd);
             continue;
         }
         /*if (strcasecmp(cmd, "pushr") == 0)  {
