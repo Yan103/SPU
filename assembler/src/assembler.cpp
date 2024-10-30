@@ -230,5 +230,4 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
     }
 
     fwrite(cmds, sizeof(cmds[0]), (size_t)i, output_filename);
-    printf("%d\n", i);
 }

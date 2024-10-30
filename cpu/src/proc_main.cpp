@@ -28,7 +28,8 @@ int main (int argc, char* argv[]) {
 
     CPUWork(spu);
 
-    printf("%d\n", spu->ram[15]);
+    printf("%d\n", spu->regs[0]);
+    printf("%d\n", spu->ram[ 5 + 5 ]);
 
     SpuDtor(spu);
 

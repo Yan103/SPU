@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <stdlib.h>
+
 #include "Default.h"
 #include "ReturnCodes.h"
 #include "StackMethods.h"
@@ -27,7 +29,7 @@ int* GetArg (SPU* spu) {
     int* arg_value = NULL;
 
     if (arg_type & 1) {
-        arg_value = &(spu->regs[(spu->cmds)[++(spu->ip)]]);
+        arg_value = &(spu->regs[ (spu->cmds)[++(spu->ip)] ]);
     }
 
     if (arg_type & 2) {
@@ -41,9 +43,8 @@ int* GetArg (SPU* spu) {
 
     if (arg_type & 4) {
         arg_value = &spu->ram[*arg_value];
-        printf("%d !\n", *arg_value);
+        //printf("%d !\n", *arg_value);
     }
-
     return arg_value;
 }
 
@@ -56,7 +57,6 @@ void CPUWork(SPU* spu) {
         switch(spu->cmds[ spu->ip ]) {
             case PUSH: {
                 int* push_elem_ptr = GetArg(spu);
-                printf("%d 1\n", *push_elem_ptr);
                 StackPush(spu->st, *push_elem_ptr);
                 (spu->ip)++;
                 break;
@@ -64,8 +64,8 @@ void CPUWork(SPU* spu) {
 
             case POP: {
                 int* pop_ptr = GetArg(spu);
-                printf("%d\n", *pop_ptr);
-                // *pop_ptr = StackPop(spu->st);
+                *pop_ptr = StackPop(spu->st);
+                (spu->ip)++;
                 break;
             }
 
