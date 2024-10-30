@@ -8,6 +8,11 @@
 #include "assembler.h"
 #include "/home/yan/projects/processor/cpu/include/ReturnCodes.h"
 
+const int REG_BIT        = 1;
+const int MEMORY_BIT     = 4;
+const int CONSTANT_BIT   = 2;
+const size_t MAX_CMD_LENGTH = 20;
+
 char* SearchConstPtr(char* str, size_t str_len) {
     assert(str != NULL);
 
@@ -18,7 +23,7 @@ char* SearchConstPtr(char* str, size_t str_len) {
     return NULL;
 }
 
-void FillArgType(char* arg, int* arg_type) {
+FuncReturn FillArgType(char* arg, int* arg_type) {
     assert(arg != NULL);
     assert(arg_type != NULL);
 
@@ -27,17 +32,22 @@ void FillArgType(char* arg, int* arg_type) {
     char* reg_ptr      = strchr(arg, 'X');
 
     if (open_bracket != NULL) {
-        //if (strchr(arg, ']') == NULL) return ERROR; // TODO smt with it // TODO! error enum for cpu/asm
-        *arg_type |= 4;
+        if (strchr(arg, ']') == NULL) {
+            return ERROR;
+        }
+        *arg_type |= MEMORY_BIT;
     }
 
     if (plus_ptr != NULL) {
-        *arg_type |= 3;
+        *arg_type |= REG_BIT;
+        *arg_type |= CONSTANT_BIT;
     } else if (reg_ptr != NULL) {
-        *arg_type |= 1;
+        *arg_type |= REG_BIT;
     } else {
-        *arg_type |= 2;
+        *arg_type |= CONSTANT_BIT;
     }
+
+    return SUCCESS;
 }
 
 Reg GetRegValue(char* cmd) {
@@ -47,11 +57,12 @@ Reg GetRegValue(char* cmd) {
     else if (strstr(cmd, "BX")) return BX;
     else if (strstr(cmd, "CX")) return CX;
     else if (strstr(cmd, "DX")) return DX;
+    else if (strstr(cmd, "EX")) return EX;
 
-    return AX;
+    return XX;
 }
 
-void SkipAsmComments(char* curr_line) {
+FuncReturn SkipAsmComments(char* curr_line) {
     assert(curr_line != NULL);
 
     for (size_t i = 0; i < strlen(curr_line); i++) {
@@ -60,9 +71,11 @@ void SkipAsmComments(char* curr_line) {
             break;
         }
     }
+
+    return SUCCESS;
 }
 
-void GetCommandsArgs(int argc,  char* argv[]) {
+FuncReturn GetCommandsArgs(int argc,  char* argv[]) {
     assert(argc != 0);
     assert(argv != NULL);
 
@@ -75,6 +88,8 @@ void GetCommandsArgs(int argc,  char* argv[]) {
                 OUTPUT_FILENAME = argv[i + 1];
         }
     }
+
+    return SUCCESS;
 }
 
 void FromTextToCode (char* cmd, int* machine_cmd) {
@@ -92,10 +107,9 @@ void FromTextToCode (char* cmd, int* machine_cmd) {
     else if (strcasecmp(cmd, "call")  == 0)  *machine_cmd = CALL;
     else if (strcasecmp(cmd, "ret")   == 0)  *machine_cmd = RET;
     else if (strcasecmp(cmd, "hlt")   == 0)  *machine_cmd = HLT;
-    // TODO error check
 }
 
-void PushPopFill(int* cmds, int* ip, char* arg) {
+FuncReturn PushPopFill(int* cmds, int* ip, char* arg) {
     assert(cmds != NULL);
     assert(ip   != NULL);
     assert(arg  != NULL);
@@ -105,24 +119,28 @@ void PushPopFill(int* cmds, int* ip, char* arg) {
 
     cmds[ (*ip)++ ] = arg_type;
 
-    if (arg_type & 1) {
-        Reg tmp = GetRegValue(arg);
-        cmds[ (*ip)++ ] = tmp;
+    if (arg_type & REG_BIT) {
+        Reg reg_value = GetRegValue(arg);
+        cmds[ (*ip)++ ] = reg_value;
     }
 
-    if (arg_type & 2) {
-        char* const_ptr = SearchConstPtr(arg, strlen(arg)); // TODO check for NULL!
+    if (arg_type & CONSTANT_BIT) {
+        char* const_ptr = SearchConstPtr(arg, strlen(arg));
         if (const_ptr != NULL) {
-            sscanf(const_ptr, "%d", &cmds[(*ip)++]);
+            sscanf(const_ptr, "%d", &cmds[ (*ip)++ ]);
+        } else {
+            return ERROR;
         }
     }
+
+    return SUCCESS;
 }
 
-void FormateArg (char* push_arg_unformated, char* push_arg) {
+FuncReturn FormateArg (char* push_arg_unformated, char* push_arg) {
     assert (push_arg_unformated != NULL);
 
     char symb = *push_arg_unformated;
-    char push_arg_formated[20] = {};
+    char push_arg_formated[MAX_CMD_LENGTH] = {};
     int format_ptr = 0;
 
     while (symb == ' ') {
@@ -130,7 +148,7 @@ void FormateArg (char* push_arg_unformated, char* push_arg) {
         symb = *push_arg_unformated;
     }
 
-    for (int i = 0; i < 20 - 1; i++) {
+    for (size_t i = 0; i < MAX_CMD_LENGTH - 1; i++) {
         if (symb != '\r') {
             push_arg_formated[format_ptr] = symb;
             format_ptr += 1;
@@ -139,17 +157,21 @@ void FormateArg (char* push_arg_unformated, char* push_arg) {
         symb = *push_arg_unformated;
     }
 
-    memcpy(push_arg, push_arg_formated, 20);
+    memcpy(push_arg, push_arg_formated, MAX_CMD_LENGTH);
+
+    return SUCCESS;
 }
 
 void Assembler(FILE* input_filename, FILE* output_filename) {
     assert(input_filename  != NULL);
     assert(output_filename != NULL);
 
-    char cmd[20] = {};
+    char cmd[MAX_CMD_LENGTH] = {};
     char curr_line[MAXLINE] = {};
     int  cmds[CMDS_SIZE] = {};
+
     int i = 0, Doflag = 1;
+    int machine_code = 0;
 
     Label Labels[LABELS_COUNT] = {};
     char* fflag = {};
@@ -161,11 +183,11 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
             i = 0;
             Doflag--;
             fseek(input_filename, 0L, SEEK_SET);
+
             continue;
         }
 
         sscanf(curr_line, "%s", cmd);
-        int machine_code = -2;
         FromTextToCode(cmd, &machine_code);
 
         switch (machine_code) {
@@ -173,7 +195,7 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
             case POP: {
                 cmds[i++] = machine_code;
                 sscanf(curr_line, "%s %[^\n]", cmd, cmd);
-                char arg[20] = {};
+                char arg[MAX_CMD_LENGTH] = {};
                 FormateArg(cmd, arg);
                 PushPopFill(cmds, &i, arg);
 

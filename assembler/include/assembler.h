@@ -12,13 +12,13 @@ static const char* OUTPUT_FILENAME = "/home/yan/projects/processor/tests/assembl
 
 Reg GetRegValue(char* cmd);
 
-void SkipAsmComments(char* curr_line);
+FuncReturn SkipAsmComments(char* curr_line);
 
-void GetCommandsArgs(int argc,  char* argv[]);
+FuncReturn GetCommandsArgs(int argc,  char* argv[]);
 
-void FillArgType(char* arg, int* arg_type);
+FuncReturn FillArgType(char* arg, int* arg_type);
 
-void PushPopFill(int* cmds, int* ip, char* arg);
+FuncReturn PushPopFill(int* cmds, int* ip, char* arg);
 
 char* SearchConstPtr(char* str, size_t str_len);
 
@@ -26,6 +26,6 @@ void FromTextToCode(char* cmd, int* machine_code);
 
 void Assembler(FILE* input_file, FILE* output_file);
 
-void FormateArg(char* push_arg_unformated, char* push_arg);
+FuncReturn FormateArg(char* push_arg_unformated, char* push_arg);
 
 #endif // ASSEMBLER_H
