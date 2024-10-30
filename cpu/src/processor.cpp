@@ -41,6 +41,7 @@ int* GetArg (SPU* spu) {
 
     if (arg_type & 4) {
         arg_value = &spu->ram[*arg_value];
+        printf("%d !\n", *arg_value);
     }
 
     return arg_value;
@@ -55,6 +56,7 @@ void CPUWork(SPU* spu) {
         switch(spu->cmds[ spu->ip ]) {
             case PUSH: {
                 int* push_elem_ptr = GetArg(spu);
+                printf("%d 1\n", *push_elem_ptr);
                 StackPush(spu->st, *push_elem_ptr);
                 (spu->ip)++;
                 break;
@@ -62,7 +64,8 @@ void CPUWork(SPU* spu) {
 
             case POP: {
                 int* pop_ptr = GetArg(spu);
-                *pop_ptr = StackPop(spu->st);
+                printf("%d\n", *pop_ptr);
+                // *pop_ptr = StackPop(spu->st);
                 break;
             }
 

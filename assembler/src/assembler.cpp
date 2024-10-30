@@ -43,12 +43,12 @@ void FillArgType(char* arg, int* arg_type) {
 Reg GetRegValue(char* cmd) {
     assert(cmd != NULL);
 
-    if (strcasecmp(cmd, "ax") == 0) return AX;
-    if (strcasecmp(cmd, "bx") == 0) return BX;
-    if (strcasecmp(cmd, "cx") == 0) return CX;
-    if (strcasecmp(cmd, "dx") == 0) return DX;
+         if (strstr(cmd, "AX")) return AX;
+    else if (strstr(cmd, "BX")) return BX;
+    else if (strstr(cmd, "CX")) return CX;
+    else if (strstr(cmd, "DX")) return DX;
 
-    return EX;
+    return AX;
 }
 
 void SkipAsmComments(char* curr_line) {
@@ -63,6 +63,7 @@ void SkipAsmComments(char* curr_line) {
 }
 
 void GetCommandsArgs(int argc,  char* argv[]) {
+    assert(argc != 0);
     assert(argv != NULL);
 
     for (int i = 1; i < argc; i++) {
@@ -105,7 +106,8 @@ void PushPopFill(int* cmds, int* ip, char* arg) {
     cmds[ (*ip)++ ] = arg_type;
 
     if (arg_type & 1) {
-        cmds[(*ip)++] = GetRegValue(arg);
+        Reg tmp = GetRegValue(arg);
+        cmds[ (*ip)++ ] = tmp;
     }
 
     if (arg_type & 2) {
@@ -116,11 +118,35 @@ void PushPopFill(int* cmds, int* ip, char* arg) {
     }
 }
 
+void FormateArg (char* push_arg_unformated, char* push_arg) {
+    assert (push_arg_unformated != NULL);
+
+    char symb = *push_arg_unformated;
+    char push_arg_formated[20] = {};
+    int format_ptr = 0;
+
+    while (symb == ' ') {
+        push_arg_unformated += 1;
+        symb = *push_arg_unformated;
+    }
+
+    for (int i = 0; i < 20 - 1; i++) {
+        if (symb != '\r') {
+            push_arg_formated[format_ptr] = symb;
+            format_ptr += 1;
+        }
+        push_arg_unformated += 1;
+        symb = *push_arg_unformated;
+    }
+
+    memcpy(push_arg, push_arg_formated, 20);
+}
+
 void Assembler(FILE* input_filename, FILE* output_filename) {
     assert(input_filename  != NULL);
     assert(output_filename != NULL);
 
-    char cmd[10] = {};
+    char cmd[20] = {};
     char curr_line[MAXLINE] = {};
     int  cmds[CMDS_SIZE] = {};
     int i = 0, Doflag = 1;
@@ -146,8 +172,10 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
             case PUSH:
             case POP: {
                 cmds[i++] = machine_code;
-                sscanf(curr_line, "%s %s", cmd, cmd);
-                PushPopFill(cmds, &i, cmd);
+                sscanf(curr_line, "%s %[^\n]", cmd, cmd);
+                char arg[20] = {};
+                FormateArg(cmd, arg);
+                PushPopFill(cmds, &i, arg);
 
                 continue;
             }
@@ -202,4 +230,5 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
     }
 
     fwrite(cmds, sizeof(cmds[0]), (size_t)i, output_filename);
+    printf("%d\n", i);
 }

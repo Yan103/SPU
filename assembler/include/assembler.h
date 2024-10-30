@@ -25,4 +25,6 @@ void FromTextToCode(char* cmd, int* machine_code);
 
 void Assembler(FILE* input_file, FILE* output_file);
 
+void FormateArg(char* push_arg_unformated, char* push_arg);
+
 #endif // ASSEMBLER_H

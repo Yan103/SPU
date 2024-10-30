@@ -5,7 +5,7 @@
 
 int main(int argc, char* argv[]) {
     GetCommandsArgs(argc, argv);
-    printf("%s\n", INPUT_FILENAME);
+
     FILE* input_filename = fopen(INPUT_FILENAME, "r");
 
     if (!input_filename) {
