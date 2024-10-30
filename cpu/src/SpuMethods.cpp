@@ -1,4 +1,10 @@
+/*!
+    \file
+    File with SPU methods
+*/
+
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "Default.h"
 #include "ReturnCodes.h"
@@ -7,8 +13,10 @@
 #include "Config.h"
 #include "SpuMethods.h"
 
-#include <stdlib.h>
-
+/*!
+    @brief Function that initialize and create SPU struct
+    \param [out] spu - the pointer on SPU struct
+*/
 SPU* SpuInit() {
     SPU* spu = (SPU*)calloc(1, sizeof(SPU));
     ASSERT(spu != NULL, "MEMORY ERROR!\n");
@@ -19,6 +27,10 @@ SPU* SpuInit() {
     return spu;
 }
 
+/*!
+    @brief Function that determinate SPU structer
+    \param [out] spu - the pointer on SPU struct
+*/
 void SpuDtor(SPU* spu) {
     ASSERT(spu != NULL, "NULL POINTER!\n");
 

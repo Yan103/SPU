@@ -1,3 +1,8 @@
+/*!
+    \file
+    File with declararion of SPU methods
+*/
+
 #ifndef SPUMETHODS_H
 #define SPUMETHODS_H
 
@@ -6,8 +11,7 @@
 #include "Stack.h"
 #include "Default.h"
 
-//todo pointers at arrays in SPU struct and calloc
-
+/// @brief Structure with SPU
 struct SPU {
     int ip = 0;
     Stack* st = NULL;
@@ -17,8 +21,16 @@ struct SPU {
     int ram[RAM_SIZE] = {};
 };
 
+/*!
+    @brief Function that initialize and create SPU struct
+    \param [out] spu - the pointer on SPU struct
+*/
 SPU* SpuInit();
 
+/*!
+    @brief Function that determinate SPU structer
+    \param [out] spu - the pointer on SPU struct
+*/
 void SpuDtor(SPU* spu);
 
 #endif // SPUMETHODS_H

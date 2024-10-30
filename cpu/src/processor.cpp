@@ -1,6 +1,10 @@
+/*!
+    \file
+    File with processor functions
+*/
+
 #include <stdio.h>
 #include <string.h>
-
 #include <stdlib.h>
 
 #include "Default.h"
@@ -11,6 +15,20 @@
 #include "SpuMethods.h"
 #include "processor.h"
 
+/// @brief Constant for the register bit
+const int REG_BIT      = 1;
+
+/// @brief Constant for the memory bit
+const int MEMORY_BIT   = 4;
+
+/// @brief Constant for the constant bit
+const int CONSTANT_BIT = 2;
+
+/*!
+    @brief Function that get arguments from the command line
+    \param [in] argc - argument count
+    \param [in] argv - argument values
+*/
 void GetCommandsArgs(int argc,  char* argv[]) {
     assert(argv != NULL);
 
@@ -22,17 +40,21 @@ void GetCommandsArgs(int argc,  char* argv[]) {
     }
 }
 
+/*!
+    @brief Function that get argument for the processor commands
+    \param [in] spu - the pointer on the spu struct
+*/
 int* GetArg (SPU* spu) {
     assert(spu != NULL);
 
     int arg_type  = (spu->cmds)[++(spu->ip)];
     int* arg_value = NULL;
 
-    if (arg_type & 1) {
+    if (arg_type & REG_BIT) {
         arg_value = &(spu->regs[ (spu->cmds)[++(spu->ip)] ]);
     }
 
-    if (arg_type & 2) {
+    if (arg_type & CONSTANT_BIT) {
         if (arg_value != NULL) {
             spu->regs[XX] = *arg_value + (spu->cmds)[++(spu->ip)];
         } else {
@@ -41,12 +63,16 @@ int* GetArg (SPU* spu) {
         arg_value = &spu->regs[XX];
     }
 
-    if (arg_type & 4) {
+    if (arg_type & MEMORY_BIT) {
         arg_value = &spu->ram[*arg_value];
     }
     return arg_value;
 }
 
+/*!
+    @brief Function that launched processor
+    \param [in] spu - the pointer on SPU struct
+*/
 void CPUWork(SPU* spu) {
     assert(spu != NULL);
 

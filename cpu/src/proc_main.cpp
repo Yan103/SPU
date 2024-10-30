@@ -1,3 +1,8 @@
+/*!
+    \file
+    File with processor main function
+*/
+
 #include <stdio.h>
 #include <string.h>
 

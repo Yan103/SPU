@@ -1,3 +1,8 @@
+/*!
+    \file
+    File with return codes, enums and structers
+*/
+
 #ifndef RETURNCODES_H
 #define RETURNCODES_H
 
@@ -6,8 +11,17 @@
 #include "Default.h"
 #include "Stack.h"
 
-static const size_t LABEL_NAME_LEN = 10;
-static const size_t LABELS_COUNT   = 10;
+/// @brief Constant for the maximum label's name
+static const size_t LABEL_NAME_LEN = 15;
+
+/// @brief Constant for the labels count
+static const size_t LABELS_COUNT   = 25;
+
+/// @brief Structure with Labels
+struct Label {
+    char label_name[LABEL_NAME_LEN];
+    int  label_number = -1;
+};
 
 /// @brief Enum with return functions codes
 enum FuncReturn {
@@ -23,6 +37,7 @@ enum FuncReturn {
     ERROR          = -1,
 };
 
+/// @brief Enum with processor commands
 enum Comands {
     PUSH  =  1,
     POP   =  2,
@@ -43,6 +58,7 @@ enum Comands {
     HLT   = -1,
 };
 
+/// @brief Enum with registers
 enum Reg {
     AX = 0,
     BX = 1,
@@ -50,11 +66,6 @@ enum Reg {
     DX = 3,
     EX = 4,
     XX = 5,
-};
-
-struct Label {
-    char label_name[LABEL_NAME_LEN];
-    int  label_number = -1;
 };
 
 #endif // RETURNCODES_H
