@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-#include "Stack.h"
 #include "Default.h"
+#include "Stack.h"
 
 static const size_t LABEL_NAME_LEN = 10;
 static const size_t LABELS_COUNT   = 10;

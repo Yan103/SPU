@@ -1,3 +1,7 @@
+/*!
+    \file
+    File with the declaration of assembler main function
+*/
 
 #include <stdio.h>
 #include <string.h>
