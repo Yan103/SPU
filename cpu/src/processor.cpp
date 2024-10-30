@@ -43,7 +43,6 @@ int* GetArg (SPU* spu) {
 
     if (arg_type & 4) {
         arg_value = &spu->ram[*arg_value];
-        //printf("%d !\n", *arg_value);
     }
     return arg_value;
 }

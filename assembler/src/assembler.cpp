@@ -18,6 +18,8 @@ char* SearchConstPtr(char* str, size_t str_len) {
     return NULL;
 }
 
+//! -lm
+
 void FillArgType(char* arg, int* arg_type) {
     assert(arg != NULL);
     assert(arg_type != NULL);
@@ -68,8 +70,9 @@ void GetCommandsArgs(int argc,  char* argv[]) {
 
     for (int i = 1; i < argc; i++) {
         if (strcasecmp(argv[i], "-f") == 0) {
-            if (i != argc - 1)
+            if (i != argc - 1) {
                 INPUT_FILENAME = argv[i + 1];
+            }
         } else if (strcasecmp(argv[i], "-o") == 0) {
             if (i != argc - 1)
                 OUTPUT_FILENAME = argv[i + 1];
@@ -189,6 +192,7 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
             case RET:
             case HLT: {
                 cmds[i++] = machine_code;
+
 
                 continue;
             }
