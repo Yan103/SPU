@@ -153,7 +153,7 @@ void CPUWork(SPU* spu) {
             }
 
             default: {
-                printf("%d %d", spu->ip, spu->cmds[ spu->ip ]);
+                printf("%d %d ", spu->ip, spu->cmds[ spu->ip ]);
                 printf(RED("UNKNOWN CODE!!!\n"));
                 break;
             }
