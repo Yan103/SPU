@@ -24,5 +24,6 @@ void SpuDtor(SPU* spu) {
 
     StackDtor(spu->st);
     StackDtor(spu->stFunc);
-    FREE(spu);
+
+    FREE(spu)
 }

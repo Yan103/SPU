@@ -1,3 +1,4 @@
+
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
@@ -6,8 +7,8 @@
 #include "/home/yan/projects/processor/cpu/include/Default.h"
 #include "/home/yan/projects/processor/cpu/include/ReturnCodes.h"
 
-static const char* INPUT_FILENAME  = "/home/yan/projects/processor/program.asm";
-static const char* OUTPUT_FILENAME = "/home/yan/projects/processor/assembler_code.txt";
+static const char* INPUT_FILENAME  = "/home/yan/projects/processor/tests/program.asm";
+static const char* OUTPUT_FILENAME = "/home/yan/projects/processor/tests/assembler_code.txt";
 
 Reg GetRegValue(char* cmd);
 
