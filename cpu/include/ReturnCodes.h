@@ -57,6 +57,9 @@ enum Comands {
     CALL  = 16,
     RET   = 17,
     SQRT  = 18,
+    SQR   = 19,
+    MOD   = 20,
+    IDIV  = 21,
     HLT   = -1,
 };
 

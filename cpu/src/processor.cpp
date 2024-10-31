@@ -179,6 +179,41 @@ void CPUWork(SPU* spu) {
                 break;
             }
 
+            case SQR: {
+                int a = StackPop(spu->st) / CALC_ACCURACY;
+                StackPush(spu->st, a * a * CALC_ACCURACY);
+                (spu->ip)++;
+                break;
+            }
+
+            case MOD: {
+                int a = StackPop(spu->st) / CALC_ACCURACY;
+                int b = StackPop(spu->st) / CALC_ACCURACY;
+
+                if (a != 0) {
+                    StackPush(spu->st, (b % a) * CALC_ACCURACY);
+                } else {
+                    printf(RED("ZERO DIVISION!\n"));
+                    DoFlag = 0;
+                }
+                (spu->ip)++;
+                break;
+            }
+
+            case IDIV: {
+                int a = StackPop(spu->st) / CALC_ACCURACY;
+                int b = StackPop(spu->st) / CALC_ACCURACY;
+
+                if (a != 0) {
+                    StackPush(spu->st, (b / a) * CALC_ACCURACY);
+                } else {
+                    printf(RED("ZERO DIVISION!\n"));
+                    DoFlag = 0;
+                }
+                (spu->ip)++;
+                break;
+            }
+
             case JNE: {
                 int a = StackPop(spu->st);
                 int b = StackPop(spu->st);

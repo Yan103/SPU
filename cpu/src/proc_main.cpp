@@ -33,6 +33,12 @@ int main (int argc, char* argv[]) {
 
     CPUWork(spu);
 
+    for (size_t i = 0; i < 200; i++) {
+        printf("%c ", spu->ram[i]);
+        if (i + 1 % 50 == 0) printf("\n");
+    }
+
+
     SpuDtor(spu);
 
     return SUCCESS;

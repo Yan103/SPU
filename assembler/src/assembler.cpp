@@ -151,7 +151,10 @@ void FromTextToCode (char* cmd, int* machine_cmd) {
     else if (strcasecmp(cmd, "call")  == 0)  *machine_cmd  = CALL;
     else if (strcasecmp(cmd, "ret")   == 0)  *machine_cmd  = RET;
     else if (strcasecmp(cmd, "hlt")   == 0)  *machine_cmd  = HLT;
-    else if (strcasecmp(cmd, "sqrt")   == 0)  *machine_cmd = SQRT;
+    else if (strcasecmp(cmd, "sqrt")  == 0)  *machine_cmd  = SQRT;
+    else if (strcasecmp(cmd, "mod")   == 0)  *machine_cmd  = MOD;
+    else if (strcasecmp(cmd, "idiv")  == 0)  *machine_cmd  = IDIV;
+    else if (strcasecmp(cmd, "sqr")   == 0)  *machine_cmd  = SQR;
 }
 
 /*!
@@ -265,6 +268,9 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
 
             case ADD:
             case SQRT:
+            case SQR:
+            case MOD:
+            case IDIV:
             case SUB:
             case DIV:
             case MUL:

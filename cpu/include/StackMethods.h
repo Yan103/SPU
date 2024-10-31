@@ -16,7 +16,7 @@
 static const int POISON_NUM = -666;
 
 /// @brief Constant for default stack size
-static const int START_SIZE = 2;
+static const int START_SIZE = 64;
 
 /*!
     @brief Function that checks the right and left kanaryees

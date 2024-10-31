@@ -3,6 +3,8 @@
     File with the declaration of assembler main function
 */
 
+//TODO asm command for message in solve square
+
 #include <stdio.h>
 #include <string.h>
 
