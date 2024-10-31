@@ -145,6 +145,8 @@ void FromTextToCode (char* cmd, int* machine_cmd) {
     else if (strcasecmp(cmd, "out")   == 0)  *machine_cmd = OUT;
     else if (strcasecmp(cmd, "jmp")   == 0)  *machine_cmd = JMP;
     else if (strcasecmp(cmd, "jne")   == 0)  *machine_cmd = JNE;
+    else if (strcasecmp(cmd, "jlz")   == 0)  *machine_cmd = JLZ;
+    else if (strcasecmp(cmd, "jgz")   == 0)  *machine_cmd = JGZ;
     else if (strcasecmp(cmd, "je")    == 0)  *machine_cmd = JE;
     else if (strcasecmp(cmd, "call")  == 0)  *machine_cmd = CALL;
     else if (strcasecmp(cmd, "ret")   == 0)  *machine_cmd = RET;

@@ -18,8 +18,18 @@ push 0
 push AX
 jne NZA
 je ZA
-NZA:
-        push 11
+DZ:
+        push 0
+        push BX
+        sub
+        push 2
+        push AX
+        mul
+        div
+        out
+        hlt
+DGZ:
+        push 1
         out
         hlt
 ZA:
@@ -45,6 +55,12 @@ ZC:
         out
         hlt
 NOROOTS:
-        push 666666666
+        push 6666
         out
         hlt
+NZA:
+        push DX
+        jlz NOROOTS
+        jgz DGZ
+        push 0
+        je DZ

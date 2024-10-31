@@ -82,14 +82,14 @@ void CPUWork(SPU* spu) {
         switch(spu->cmds[ spu->ip ]) {
             case PUSH: {
                 int* push_elem_ptr = GetArg(spu);
-                StackPush(spu->st, *push_elem_ptr);
+                StackPush(spu->st, *push_elem_ptr * 100); //!
                 (spu->ip)++;
                 break;
             }
 
             case POP: {
                 int* pop_ptr = GetArg(spu);
-                *pop_ptr = StackPop(spu->st);
+                *pop_ptr = StackPop(spu->st) / 100;
                 (spu->ip)++;
                 break;
             }
@@ -110,7 +110,7 @@ void CPUWork(SPU* spu) {
             case DIV: {
                 int a = StackPop(spu->st);
                 if (a != 0)
-                    StackPush(spu->st, StackPop(spu->st) / a);
+                    StackPush(spu->st, 100 * StackPop(spu->st) / a); //!
                 else {
                     printf(RED("ERROR! DIVISION BY ZERO!!!\n"));
                     DoFlag = 0;
@@ -120,7 +120,7 @@ void CPUWork(SPU* spu) {
             }
 
             case MUL: {
-                StackPush(spu->st, StackPop(spu->st) * StackPop(spu->st));
+                StackPush(spu->st, StackPop(spu->st) * StackPop(spu->st) / 100); //!
                 (spu->ip)++;
                 break;
             }
@@ -128,13 +128,13 @@ void CPUWork(SPU* spu) {
             case IN: {
                 int a = 0;
                 printf(YELLOW("Enter a number: ")); scanf("%d", &a);
-                StackPush(spu->st, a);
+                StackPush(spu->st, a * 100); //!
                 (spu->ip)++;
                 break;
             }
 
             case OUT: {
-                printf(GREEN("RESULT: %d\n"), StackPop(spu->st));
+                printf(GREEN("RESULT: %lg\n"), (double) StackPop(spu->st) / 100);
                 (spu->ip)++;
                 break;
             }
@@ -167,8 +167,6 @@ void CPUWork(SPU* spu) {
                 int a = StackPop(spu->st);
                 int b = StackPop(spu->st);
 
-                printf("%d %d %d\n", a, b, a != b);
-
                 if (a != b) {
                     int next_ip = spu->cmds[ ++(spu->ip) ];
                     spu->ip = next_ip;
@@ -179,11 +177,33 @@ void CPUWork(SPU* spu) {
                 break;
             }
 
+            case JLZ: {
+                int a = StackPop(spu->st);
+
+                if (a < 0) {
+                    int next_ip = spu->cmds[ ++(spu->ip) ];
+                    spu->ip = next_ip;
+                } else spu->ip += 2;
+
+                StackPush(spu->st, a);
+                break;
+            }
+
+            case JGZ: {
+                int a = StackPop(spu->st);
+
+                if (a > 0) {
+                    int next_ip = spu->cmds[ ++(spu->ip) ];
+                    spu->ip = next_ip;
+                } else spu->ip += 2;
+
+                StackPush(spu->st, a);
+                break;
+            }
+
             case JE: {
                 int a = StackPop(spu->st);
                 int b = StackPop(spu->st);
-
-                printf("%d %d %d\n", a, b, a == b);
 
                 if (a == b) {
                     int next_ip = spu->cmds[ ++(spu->ip) ];
