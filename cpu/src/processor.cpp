@@ -25,6 +25,9 @@ const int MEMORY_BIT   = 4;
 /// @brief Constant for the constant bit
 const int CONSTANT_BIT = 2;
 
+/// @brief Constant for calculation accuracy
+const int CALC_ACCURACY = 2;
+
 /*!
     @brief Function that get arguments from the command line
     \param [in] argc - argument count
@@ -83,14 +86,14 @@ void CPUWork(SPU* spu) {
         switch(spu->cmds[ spu->ip ]) {
             case PUSH: {
                 int* push_elem_ptr = GetArg(spu);
-                StackPush(spu->st, *push_elem_ptr * 100); //!
+                StackPush(spu->st, *push_elem_ptr * CALC_ACCURACY);
                 (spu->ip)++;
                 break;
             }
 
             case POP: {
                 int* pop_ptr = GetArg(spu);
-                *pop_ptr = StackPop(spu->st) / 100;
+                *pop_ptr = StackPop(spu->st) / CALC_ACCURACY;
                 (spu->ip)++;
                 break;
             }
@@ -111,7 +114,7 @@ void CPUWork(SPU* spu) {
             case DIV: {
                 int a = StackPop(spu->st);
                 if (a != 0)
-                    StackPush(spu->st, 100 * StackPop(spu->st) / a); //!
+                    StackPush(spu->st, CALC_ACCURACY * StackPop(spu->st) / a);
                 else {
                     printf(RED("ERROR! DIVISION BY ZERO!!!\n"));
                     DoFlag = 0;
@@ -121,7 +124,7 @@ void CPUWork(SPU* spu) {
             }
 
             case MUL: {
-                StackPush(spu->st, StackPop(spu->st) * StackPop(spu->st) / 100); //!
+                StackPush(spu->st, StackPop(spu->st) * StackPop(spu->st) / CALC_ACCURACY);
                 (spu->ip)++;
                 break;
             }
@@ -129,13 +132,13 @@ void CPUWork(SPU* spu) {
             case IN: {
                 int a = 0;
                 printf(YELLOW("Enter a number: ")); scanf("%d", &a);
-                StackPush(spu->st, a * 100); //!
+                StackPush(spu->st, a * CALC_ACCURACY);
                 (spu->ip)++;
                 break;
             }
 
             case OUT: {
-                printf(GREEN("RESULT: %lg\n"), (double) StackPop(spu->st) / 100);
+                printf(GREEN("RESULT: %lg\n"), (double) StackPop(spu->st) / CALC_ACCURACY);
                 (spu->ip)++;
                 break;
             }
@@ -165,9 +168,9 @@ void CPUWork(SPU* spu) {
             }
 
             case SQRT: {
-                int a = StackPop(spu->st) / 100;
+                int a = StackPop(spu->st) / CALC_ACCURACY;
                 if (a >= 0) {
-                    StackPush(spu->st, sqrt(a) * 100);
+                    StackPush(spu->st, sqrt(a) * CALC_ACCURACY);
                 } else {
                     printf(RED("SQRT ERROR!\n"));
                     DoFlag = 0;
