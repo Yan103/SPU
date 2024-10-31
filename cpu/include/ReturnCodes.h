@@ -60,6 +60,8 @@ enum Comands {
     SQR   = 19,
     MOD   = 20,
     IDIV  = 21,
+    JGE   = 22,
+    DRAW  = 23,
     HLT   = -1,
 };
 
@@ -70,7 +72,11 @@ enum Reg {
     CX = 2,
     DX = 3,
     EX = 4,
-    XX = 5,
+    FX = 5,
+    GX = 6,
+    HX = 7,
+    IX = 8,
+    XX = 9,
 };
 
 #endif // RETURNCODES_H

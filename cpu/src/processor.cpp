@@ -228,6 +228,20 @@ void CPUWork(SPU* spu) {
                 break;
             }
 
+            case JGE: {
+                int a = StackPop(spu->st);
+                int b = StackPop(spu->st);
+
+                if (a >= b) {
+                    int next_ip = spu->cmds[ ++(spu->ip) ];
+                    spu->ip = next_ip;
+                } else spu->ip += 2;
+
+                StackPush(spu->st, b);
+                StackPush(spu->st, a);
+                break;
+            }
+
             case JLZ: {
                 int a = StackPop(spu->st);
 
@@ -249,6 +263,22 @@ void CPUWork(SPU* spu) {
                 } else spu->ip += 2;
 
                 StackPush(spu->st, a);
+                break;
+            }
+
+            case DRAW: {
+                for (size_t i = 0; i < RAM_SIZE; i++) {
+                    if (spu->ram[i] != 0) {
+                        printf("%c ", spu->ram[i]);
+                    } else {
+                        printf("0 ");
+                    }
+
+                    if ((i + 1) % (size_t)sqrt(RAM_SIZE) == 0) {
+                        printf("\n");
+                    }
+                }
+                (spu->ip)++;
                 break;
             }
 

@@ -83,6 +83,10 @@ Reg GetRegValue(char* cmd) {
     else if (strstr(cmd, "CX")) return CX;
     else if (strstr(cmd, "DX")) return DX;
     else if (strstr(cmd, "EX")) return EX;
+    else if (strstr(cmd, "FX")) return FX;
+    else if (strstr(cmd, "GX")) return GX;
+    else if (strstr(cmd, "HX")) return HX;
+    else if (strstr(cmd, "IX")) return IX;
 
     return XX;
 }
@@ -155,6 +159,8 @@ void FromTextToCode (char* cmd, int* machine_cmd) {
     else if (strcasecmp(cmd, "mod")   == 0)  *machine_cmd  = MOD;
     else if (strcasecmp(cmd, "idiv")  == 0)  *machine_cmd  = IDIV;
     else if (strcasecmp(cmd, "sqr")   == 0)  *machine_cmd  = SQR;
+    else if (strcasecmp(cmd, "jge")   == 0)  *machine_cmd  = JGE;
+    else if (strcasecmp(cmd, "draw")   == 0) *machine_cmd  = DRAW;
 }
 
 /*!
@@ -277,6 +283,7 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
             case IN:
             case OUT:
             case RET:
+            case DRAW:
             case HLT: {
                 cmds[i++] = machine_code;
 
@@ -289,6 +296,7 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
             case JLZ:
             case JGZ:
             case JZ:
+            case JGE:
             case CALL: {
                 cmds[i++] = machine_code;
                 sscanf(curr_line, "%s %s", cmd, cmd);
