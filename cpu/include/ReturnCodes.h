@@ -12,10 +12,10 @@
 #include "Stack.h"
 
 /// @brief Constant for the maximum label's name
-static const size_t LABEL_NAME_LEN = 15;
+static const size_t LABEL_NAME_LEN = 50;
 
 /// @brief Constant for the labels count
-static const size_t LABELS_COUNT   = 25;
+static const size_t LABELS_COUNT   = 50;
 
 /// @brief Structure with Labels
 struct Label {
@@ -53,7 +53,8 @@ enum Comands {
     JZ    = 12,
     JGZ   = 13,
     JLZ   = 14,
-    CALL  = 15,
+    JE    = 15,
+    CALL  = 16,
     RET   = 17,
     HLT   = -1,
 };

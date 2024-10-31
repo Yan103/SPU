@@ -6,7 +6,7 @@
 #ifndef DEFAULT_H
 #define DEFAULT_H
 
-static const size_t CMDS_SIZE = 100;
+static const size_t CMDS_SIZE = 1000;
 static const size_t REGS_SIZE = 6;
 static const size_t MAXLINE   = 50;
 static const size_t FUNC_STACK_SIZE = 20;

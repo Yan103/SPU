@@ -167,7 +167,25 @@ void CPUWork(SPU* spu) {
                 int a = StackPop(spu->st);
                 int b = StackPop(spu->st);
 
+                printf("%d %d %d\n", a, b, a != b);
+
                 if (a != b) {
+                    int next_ip = spu->cmds[ ++(spu->ip) ];
+                    spu->ip = next_ip;
+                } else spu->ip += 2;
+
+                StackPush(spu->st, b);
+                StackPush(spu->st, a);
+                break;
+            }
+
+            case JE: {
+                int a = StackPop(spu->st);
+                int b = StackPop(spu->st);
+
+                printf("%d %d %d\n", a, b, a == b);
+
+                if (a == b) {
                     int next_ip = spu->cmds[ ++(spu->ip) ];
                     spu->ip = next_ip;
                 } else spu->ip += 2;

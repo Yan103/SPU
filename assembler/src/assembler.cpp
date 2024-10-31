@@ -22,7 +22,7 @@ const int MEMORY_BIT        = 4;
 const int CONSTANT_BIT      = 2;
 
 /// @brief Constant for the maximum length of the command
-const size_t MAX_CMD_LENGTH = 20;
+const size_t MAX_CMD_LENGTH = 50;
 
 /*!
     @brief Function that search a constant in command argument
@@ -145,6 +145,7 @@ void FromTextToCode (char* cmd, int* machine_cmd) {
     else if (strcasecmp(cmd, "out")   == 0)  *machine_cmd = OUT;
     else if (strcasecmp(cmd, "jmp")   == 0)  *machine_cmd = JMP;
     else if (strcasecmp(cmd, "jne")   == 0)  *machine_cmd = JNE;
+    else if (strcasecmp(cmd, "je")    == 0)  *machine_cmd = JE;
     else if (strcasecmp(cmd, "call")  == 0)  *machine_cmd = CALL;
     else if (strcasecmp(cmd, "ret")   == 0)  *machine_cmd = RET;
     else if (strcasecmp(cmd, "hlt")   == 0)  *machine_cmd = HLT;
@@ -274,6 +275,10 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
 
             case JMP:
             case JNE:
+            case JE:
+            case JLZ:
+            case JGZ:
+            case JZ:
             case CALL: {
                 cmds[i++] = machine_code;
                 sscanf(curr_line, "%s %s", cmd, cmd);
