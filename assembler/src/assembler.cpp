@@ -134,23 +134,24 @@ FuncReturn GetCommandsArgs(int argc,  char* argv[]) {
     \param [out] machine_code - future formatted machine code
 */
 void FromTextToCode (char* cmd, int* machine_cmd) {
-    if      (strchr(cmd, ':')         != 0)  *machine_cmd = LABEL;
-    else if (strcasecmp(cmd, "push")  == 0)  *machine_cmd = PUSH;
-    else if (strcasecmp(cmd, "pop")   == 0)  *machine_cmd = POP;
-    else if (strcasecmp(cmd, "add")   == 0)  *machine_cmd = ADD;
-    else if (strcasecmp(cmd, "sub")   == 0)  *machine_cmd = SUB;
-    else if (strcasecmp(cmd, "mul")   == 0)  *machine_cmd = MUL;
-    else if (strcasecmp(cmd, "div")   == 0)  *machine_cmd = DIV;
-    else if (strcasecmp(cmd, "in")    == 0)  *machine_cmd = IN;
-    else if (strcasecmp(cmd, "out")   == 0)  *machine_cmd = OUT;
-    else if (strcasecmp(cmd, "jmp")   == 0)  *machine_cmd = JMP;
-    else if (strcasecmp(cmd, "jne")   == 0)  *machine_cmd = JNE;
-    else if (strcasecmp(cmd, "jlz")   == 0)  *machine_cmd = JLZ;
-    else if (strcasecmp(cmd, "jgz")   == 0)  *machine_cmd = JGZ;
-    else if (strcasecmp(cmd, "je")    == 0)  *machine_cmd = JE;
-    else if (strcasecmp(cmd, "call")  == 0)  *machine_cmd = CALL;
-    else if (strcasecmp(cmd, "ret")   == 0)  *machine_cmd = RET;
-    else if (strcasecmp(cmd, "hlt")   == 0)  *machine_cmd = HLT;
+    if      (strchr(cmd, ':')         != 0)  *machine_cmd  = LABEL;
+    else if (strcasecmp(cmd, "push")  == 0)  *machine_cmd  = PUSH;
+    else if (strcasecmp(cmd, "pop")   == 0)  *machine_cmd  = POP;
+    else if (strcasecmp(cmd, "add")   == 0)  *machine_cmd  = ADD;
+    else if (strcasecmp(cmd, "sub")   == 0)  *machine_cmd  = SUB;
+    else if (strcasecmp(cmd, "mul")   == 0)  *machine_cmd  = MUL;
+    else if (strcasecmp(cmd, "div")   == 0)  *machine_cmd  = DIV;
+    else if (strcasecmp(cmd, "in")    == 0)  *machine_cmd  = IN;
+    else if (strcasecmp(cmd, "out")   == 0)  *machine_cmd  = OUT;
+    else if (strcasecmp(cmd, "jmp")   == 0)  *machine_cmd  = JMP;
+    else if (strcasecmp(cmd, "jne")   == 0)  *machine_cmd  = JNE;
+    else if (strcasecmp(cmd, "jlz")   == 0)  *machine_cmd  = JLZ;
+    else if (strcasecmp(cmd, "jgz")   == 0)  *machine_cmd  = JGZ;
+    else if (strcasecmp(cmd, "je")    == 0)  *machine_cmd  = JE;
+    else if (strcasecmp(cmd, "call")  == 0)  *machine_cmd  = CALL;
+    else if (strcasecmp(cmd, "ret")   == 0)  *machine_cmd  = RET;
+    else if (strcasecmp(cmd, "hlt")   == 0)  *machine_cmd  = HLT;
+    else if (strcasecmp(cmd, "sqrt")   == 0)  *machine_cmd = SQRT;
 }
 
 /*!
@@ -263,6 +264,7 @@ void Assembler(FILE* input_filename, FILE* output_filename) {
             }
 
             case ADD:
+            case SQRT:
             case SUB:
             case DIV:
             case MUL:

@@ -13,47 +13,55 @@ push CX
 mul
 mul
 sub
-out
-hlt
 pop DX
 push 0
 push AX
-jne ZA
-je NZA
+jne NZA
+je ZA
+DZ:
+        push 0
+        push BX
+        sub
+        push 2
+        push AX
+        mul
+        div
+        out
+        hlt
+DGZ:
+        push 1
+        sqrt
+        out
+        hlt
 ZA:
         push 0
         push BX
         jne NZB
         je ZB
+NZB:
+        push 0
+        push CX
+        sub
+        push BX
+        div
+        out
+        hlt
 ZB:
         push 0
         push CX
-        je INFROOTS
+        je ZC
         jne NOROOTS
-INFROOTS:
-        push -1
+ZC:
+        push 888
         out
         hlt
-NZB:
-        push -1
-        push CX
-        mul
+NOROOTS:
+        push 6666
         out
         hlt
 NZA:
         push DX
         jlz NOROOTS
-        jz 1ROOT
-        jgz 2ROOTS
-NOROOTS:
+        jgz DGZ
         push 0
-        out
-        hlt
-1ROOT:
-        push 1
-        out
-        hlt
-2ROOTS:
-        push 2
-        out
-        hlt
+        je DZ

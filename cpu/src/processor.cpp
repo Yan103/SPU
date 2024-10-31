@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <cmath>
 
 #include "Default.h"
 #include "ReturnCodes.h"
@@ -160,6 +161,18 @@ void CPUWork(SPU* spu) {
             case RET: {
                 int next_ip = StackPop(spu->stFunc);
                 spu->ip = next_ip;
+                break;
+            }
+
+            case SQRT: {
+                int a = StackPop(spu->st) / 100;
+                if (a >= 0) {
+                    StackPush(spu->st, sqrt(a) * 100);
+                } else {
+                    printf(RED("SQRT ERROR!\n"));
+                    DoFlag = 0;
+                }
+                (spu->ip)++;
                 break;
             }
 

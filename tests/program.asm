@@ -29,8 +29,28 @@ DZ:
         out
         hlt
 DGZ:
-        push 1
-        out
+        push 0
+        push BX
+        sub
+        push DX
+        sqrt
+        add
+        push 2
+        push AX
+        mul
+        div
+        out; 1 root
+        push 0
+        push BX
+        sub
+        push DX
+        sqrt
+        sub
+        push 2
+        push AX
+        mul
+        div
+        out; 2 root
         hlt
 ZA:
         push 0
