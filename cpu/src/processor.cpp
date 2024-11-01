@@ -269,9 +269,9 @@ void CPUWork(SPU* spu) {
             case DRAW: {
                 for (size_t i = 0; i < RAM_SIZE; i++) {
                     if (spu->ram[i] != 0) {
-                        printf("%c ", spu->ram[i]);
+                        printf(GREEN("%c "), spu->ram[i]);
                     } else {
-                        printf("0 ");
+                        printf("· ");
                     }
 
                     if ((i + 1) % (size_t)sqrt(RAM_SIZE) == 0) {
