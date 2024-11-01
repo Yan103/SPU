@@ -71,6 +71,10 @@ FuncReturn FillArgType(char* arg, int* arg_type) {
     return SUCCESS;
 }
 
+/*!
+    @brief Macro for the generation code for find register's value
+    \param [in] REGISTER_NAME - register name
+*/
 #define DEF_REGISTER_(REGISTER_NAME) {                 \
     if (strstr(cmd, #REGISTER_NAME))                   \
         return REGISTER_NAME;                          \
@@ -88,7 +92,7 @@ Reg GetRegValue(char* cmd) {
     //*Please, if you want to change something in the code,
     //*do everything carefully through the appropriate file or remove the code generation altogether
 
-    #include "registrs.txt"
+    #include "registrs.h"
 
     return XX;
 }
@@ -135,6 +139,10 @@ FuncReturn GetCommandsArgs(int argc,  char* argv[]) {
     return SUCCESS;
 }
 
+/*!
+    @brief Macro for generation code for find and write command from text to int value
+    \param [in] COMMAND_NAME - command name
+*/
 #define DEF_COMMAND_(COMMAND_NAME) {                                       \
     if (strcasecmp(cmd, #COMMAND_NAME) == 0) *machine_cmd  = COMMAND_NAME; \
 }
@@ -152,7 +160,7 @@ void FromTextToCode (char* cmd, int* machine_cmd) {
     //*Please, if you want to change something in the code,
     //*do everything carefully through the appropriate file or remove the code generation altogether
 
-    #include "commands.txt"
+    #include "commands.h"
 }
 #undef DEF_COMMAND_
 
