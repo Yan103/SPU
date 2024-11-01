@@ -71,6 +71,11 @@ FuncReturn FillArgType(char* arg, int* arg_type) {
     return SUCCESS;
 }
 
+#define DEF_REGISTER_(REGISTER_NAME) {                 \
+    if (strstr(cmd, #REGISTER_NAME))                   \
+        return REGISTER_NAME;                          \
+}
+
 /*!
     @brief Function that get register value from argument of command
     \param [in] cmd - command
@@ -78,18 +83,16 @@ FuncReturn FillArgType(char* arg, int* arg_type) {
 Reg GetRegValue(char* cmd) {
     assert(cmd != NULL);
 
-         if (strstr(cmd, "AX")) return AX;
-    else if (strstr(cmd, "BX")) return BX;
-    else if (strstr(cmd, "CX")) return CX;
-    else if (strstr(cmd, "DX")) return DX;
-    else if (strstr(cmd, "EX")) return EX;
-    else if (strstr(cmd, "FX")) return FX;
-    else if (strstr(cmd, "GX")) return GX;
-    else if (strstr(cmd, "HX")) return HX;
-    else if (strstr(cmd, "IX")) return IX;
+    //*IMPORTANT
+    //*Automatic code generation is used here.
+    //*Please, if you want to change something in the code,
+    //*do everything carefully through the appropriate file or remove the code generation altogether
+
+    #include "registrs.txt"
 
     return XX;
 }
+#undef DEF_REGISTER_
 
 /*!
     @brief Function that skip comments in assembler code
@@ -132,36 +135,26 @@ FuncReturn GetCommandsArgs(int argc,  char* argv[]) {
     return SUCCESS;
 }
 
+#define DEF_COMMAND_(COMMAND_NAME) {                                       \
+    if (strcasecmp(cmd, #COMMAND_NAME) == 0) *machine_cmd  = COMMAND_NAME; \
+}
+
 /*!
     @brief Function that formats the text command to code type
     \param [in]  cmd          - command
     \param [out] machine_code - future formatted machine code
 */
 void FromTextToCode (char* cmd, int* machine_cmd) {
-    if      (strchr(cmd, ':')         != 0)  *machine_cmd  = LABEL;
-    else if (strcasecmp(cmd, "push")  == 0)  *machine_cmd  = PUSH;
-    else if (strcasecmp(cmd, "pop")   == 0)  *machine_cmd  = POP;
-    else if (strcasecmp(cmd, "add")   == 0)  *machine_cmd  = ADD;
-    else if (strcasecmp(cmd, "sub")   == 0)  *machine_cmd  = SUB;
-    else if (strcasecmp(cmd, "mul")   == 0)  *machine_cmd  = MUL;
-    else if (strcasecmp(cmd, "div")   == 0)  *machine_cmd  = DIV;
-    else if (strcasecmp(cmd, "in")    == 0)  *machine_cmd  = IN;
-    else if (strcasecmp(cmd, "out")   == 0)  *machine_cmd  = OUT;
-    else if (strcasecmp(cmd, "jmp")   == 0)  *machine_cmd  = JMP;
-    else if (strcasecmp(cmd, "jne")   == 0)  *machine_cmd  = JNE;
-    else if (strcasecmp(cmd, "jlz")   == 0)  *machine_cmd  = JLZ;
-    else if (strcasecmp(cmd, "jgz")   == 0)  *machine_cmd  = JGZ;
-    else if (strcasecmp(cmd, "je")    == 0)  *machine_cmd  = JE;
-    else if (strcasecmp(cmd, "call")  == 0)  *machine_cmd  = CALL;
-    else if (strcasecmp(cmd, "ret")   == 0)  *machine_cmd  = RET;
-    else if (strcasecmp(cmd, "hlt")   == 0)  *machine_cmd  = HLT;
-    else if (strcasecmp(cmd, "sqrt")  == 0)  *machine_cmd  = SQRT;
-    else if (strcasecmp(cmd, "mod")   == 0)  *machine_cmd  = MOD;
-    else if (strcasecmp(cmd, "idiv")  == 0)  *machine_cmd  = IDIV;
-    else if (strcasecmp(cmd, "sqr")   == 0)  *machine_cmd  = SQR;
-    else if (strcasecmp(cmd, "jge")   == 0)  *machine_cmd  = JGE;
-    else if (strcasecmp(cmd, "draw")   == 0) *machine_cmd  = DRAW;
+    if (strchr(cmd, ':') != 0)  *machine_cmd  = LABEL;
+
+    //*IMPORTANT
+    //*Automatic code generation is used here.
+    //*Please, if you want to change something in the code,
+    //*do everything carefully through the appropriate file or remove the code generation altogether
+
+    #include "commands.txt"
 }
+#undef DEF_COMMAND_
 
 /*!
     @brief Function that that generates arguments for Push and Pop

@@ -170,7 +170,7 @@ void CPUWork(SPU* spu) {
             case SQRT: {
                 int a = StackPop(spu->st) / CALC_ACCURACY;
                 if (a >= 0) {
-                    StackPush(spu->st, sqrt(a) * CALC_ACCURACY);
+                    StackPush(spu->st, (int)sqrt(a) * CALC_ACCURACY);
                 } else {
                     printf(RED("SQRT ERROR!\n"));
                     DoFlag = 0;
@@ -299,6 +299,7 @@ void CPUWork(SPU* spu) {
             default: {
                 printf("%d %d ", spu->ip, spu->cmds[ spu->ip ]);
                 printf(RED("UNKNOWN CODE!!!\n"));
+                DoFlag = 0;
                 break;
             }
         }
